@@ -13,8 +13,25 @@ const users = [
     lastName: 'Rogers',
     email: 'steve@rogers.com',
     password: 'password456'
+  },
+   {
+    firstName: 'Bruce',
+    lastName: 'Wayne',
+    email: 'bruce@wayne',
+    password: 'batpassword'
+  },
+
+    {
+    firstName: 'Peter',
+    lastName: 'Parker',
+    email: 'peter@parker.com',
+    password: 'password789'
   }
 ]
+
+
+
+
 
 users.forEach(user => {
   axios
@@ -22,3 +39,7 @@ users.forEach(user => {
     .then(response => console.log(response))
     .catch(error => console.log(error))
 })
+
+
+
+ 
