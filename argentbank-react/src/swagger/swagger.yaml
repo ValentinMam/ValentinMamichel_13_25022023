@@ -31,6 +31,10 @@ paths:
             $ref: '#/definitions/LoginResponse'
         '400':
           description: Invalid Fields
+        '401':
+          description: Lacks valid authentication credentials for the requested resource
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
   /user/signup:
@@ -55,10 +59,14 @@ paths:
             $ref: '#/definitions/ApiResponse'
         '400':
           description: Invalid Fields
+        '401':
+          description: Lacks valid authentication credentials for the requested resource
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
   /user/profile:
-    post:
+    get:
       security:
         - Bearer: []
       tags:
@@ -66,11 +74,11 @@ paths:
       summary: User Profile API
       description: API for fetching a user profile
       parameters:
-        - in: header
+        - type: string
+          in: header
           name: Authorization
           description: Attach Bearer JWT token
           required: true
-          type: 'string'
       produces:
         - application/json
       responses:
@@ -80,6 +88,10 @@ paths:
             $ref: '#/definitions/ApiResponse'
         '400':
           description: Invalid Fields
+        '401':
+          description: Lacks valid authentication credentials for the requested resource
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
     put:
@@ -90,11 +102,11 @@ paths:
       summary: User Profile API
       description: API for updating a user profile
       parameters:
-        - in: header
+        - type: string
+          in: header
           name: Authorization
           description: Attach Bearer JWT token
           required: true
-          type: 'string'
         - in: body
           name: body
           description: Update user profile attributes
@@ -110,123 +122,263 @@ paths:
             $ref: '#/definitions/ApiResponse'
         '400':
           description: Invalid Fields
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
-  /user/profile/transactions:
+  /user/accounts/{accountId}:
     get:
-      security:
-        - Bearer: []
       tags:
-        - User Module
-      summary: User Transactions API
-      description: API for fetching all user transactions
+        - User Transactions
+      summary: User's Account
+      description: API for getting all accounts
       parameters:
         - in: header
           name: Authorization
           description: Attach Bearer JWT token
+          type: string
           required: true
-          type: 'string'
-      produces:
-        - application/json
+        - in: path
+          name: accountId
+          description: User's account ID
+          type: integer
+          required: true
       responses:
         '200':
-          description: User transactions data retrieved successully
+          description: Transaction retrieved successully
           schema:
             $ref: '#/definitions/Transactions'
         '400':
-          description: Invalid Fields
+          description: Bad request. User account's ID must be an integer and larger than 0.
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
-  /user/profile/transactions/{transactionId}:
+  /user/accounts/{accountId}/transactions:
     get:
-      security:
-        - Bearer: []
       tags:
-        - User Module
-      summary: User Transaction API
-      description: API for fetching a specific user transaction
+        - User Transactions
+      summary: Transactions
+      description: API for getting all transactions for the current month
       parameters:
         - in: header
           name: Authorization
           description: Attach Bearer JWT token
+          type: string
           required: true
-          type: 'string'
         - in: path
-          name: transactionId
+          name: accountId
+          description: User's account ID
           type: integer
           required: true
-          description: 'ID of the transaction to get'
-      produces:
-        - application/json
       responses:
         '200':
-          description: User Transaction data retrieved successully
+          description: Transaction retrieved successully
           schema:
-            $ref: '#/definitions/Transaction'
+            $ref: '#/definitions/Transactions'
         '400':
-          description: Invalid Fields
+          description: Bad request. User account's ID must be an integer and larger than 0.
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested resource
+        '500':
+          description: Internal Server Error
+  /user/accounts/{accountId}/transactions/{transactionsId}:
+    get:
+      tags:
+        - User Transactions
+      summary: Transaction details
+      description: API for getting a single transaction details
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          type: string
+          required: true
+        - in: path
+          name: accountId
+          description: User's account ID
+          type: integer
+          required: true
+        - in: path
+          name: transactionsId
+          description: Transaction's ID
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: Transaction retrieved successully
+          schema:
+            $ref: '#/definitions/Transactions'
+        '400':
+          description: Bad request. User account's ID/ transaction ID must be an integer and larger than 0.
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
     put:
-      security:
-        - Bearer: []
       tags:
-        - User Module
-      summary: User Transaction API
-      description: API for updating a specific user transaction
+        - User Transactions
+      summary: Transaction details
+      description: API for getting a single transaction details
       parameters:
         - in: header
           name: Authorization
           description: Attach Bearer JWT token
+          type: string
           required: true
-          type: 'string'
         - in: path
-          name: transactionId
+          name: accountId
+          description: User's account ID
           type: integer
           required: true
-          description: 'ID of the transaction to update'
-        - in: body
-          name: body
-          description: Update user transaction
+        - in: path
+          name: transactionsId
+          description: Transaction's ID
           required: true
-          schema:
-            $ref: '#/definitions/TransactionUpdate'
-      produces:
-        - application/json
+          type: integer
       responses:
         '200':
-          description: User profile retrieved successully
+          description: Transaction retrieved successully
           schema:
-            $ref: '#/definitions/TransactionUpdate'
+            $ref: '#/definitions/Transactions'
         '400':
-          description: Invalid Fields
+          description: Bad request. User account's ID/ transaction ID must be an integer and larger than 0.
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
     delete:
-      security:
-        - Bearer: []
       tags:
-        - User Module
-      summary: User Transaction API
-      description: API for deleting a specific user transaction
+        - User Transactions
+      summary: Transaction details
+      description: API for getting a single transaction details
       parameters:
         - in: header
           name: Authorization
           description: Attach Bearer JWT token
+          type: string
           required: true
-          type: 'string'
         - in: path
-          name: transactionId
+          name: accountId
+          description: User's account ID
           type: integer
           required: true
-          description: 'ID of the transaction to delete'
-      produces:
-        - application/json
+        - in: path
+          name: transactionsId
+          description: Transaction's ID
+          required: true
+          type: integer
       responses:
         '200':
-          description: User transaction successully deleted
+          description: Transaction retrieved successully
+          schema:
+            $ref: '#/definitions/Transactions'
         '400':
-          description: Invalid Fields
+          description: Bad request. User account's ID/ transaction ID must be an integer and larger than 0.
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested resource
+        '500':
+          description: Internal Server Error
+  /user/accounts/{accountId}/transactions/{transactionsId}/category:
+    patch:
+      tags:
+        - User Transactions
+      summary: Update an existing transaction (category)
+      description: API for updating a transaction's category
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          type: string
+          required: true
+        - in: path
+          name: accountId
+          description: User's account ID
+          type: integer
+          required: true
+        - in: path
+          name: transactionsId
+          description: Transaction's ID
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          description: Update transaction's informations
+          schema:
+            $ref: '#/definitions/TransactionsUpdateCategory'
+      responses:
+        '200':
+          description: Transaction updated successully
+          schema:
+            $ref: '#/definitions/Transactions'
+        '400':
+          description: Bad request. User account's ID/ transaction ID must be an integer and larger than 0.
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested transaction
+        '500':
+          description: Internal Server Error
+  /user/accounts/{accountId}/transactions/{transactionsId}/notes:
+    patch:
+      tags:
+        - User Transactions
+      summary: Update an existing transaction (notes)
+      description: API for updating transaction's notes
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          type: string
+          required: true
+        - in: path
+          name: accountId
+          description: User's account ID
+          type: integer
+          required: true
+        - in: path
+          name: transactionsId
+          description: Transaction's ID
+          required: true
+          type: integer
+        - in: body
+          name: body
+          required: true
+          description: Update transaction's informations
+          schema:
+            $ref: '#/definitions/TransactionsUpdateNotes'
+      responses:
+        '200':
+          description: Transaction updated successully
+          schema:
+            $ref: '#/definitions/Transactions'
+        '400':
+          description: Bad request. User account's ID/ transaction ID must be an integer and larger than 0.
+        '401':
+          description: Lacks valid authentication credentials for the requested resource.
+        '404':
+          description: Server cannot find the requested resource
         '500':
           description: Internal Server Error
 securityDefinitions:
@@ -284,45 +436,32 @@ definitions:
       lastName:
         type: string
   Transactions:
-    type: 'array'
-    items:
-      type: 'object'
-      properties:
-        id:
-          type: 'integer'
-        date:
-          type: 'string'
-        description:
-          type: 'string'
-        amount:
-          type: 'number'
-        typeoftransaction:
-          type: 'string'
-        category:
-          type: 'string'
-        notes:
-          type: 'string'
-  Transaction:
-    type: 'object'
+    type: object
     properties:
-      id:
-        type: 'integer'
+      transactionsId:
+        type: integer
+        format: int64
       date:
-        type: 'string'
+        type: string
       description:
-        type: 'string'
+        type: string
       amount:
-        type: 'number'
-      typeoftransaction:
-        type: 'string'
+        type: number
+      currency:
+        type: string
+      type:
+        type: string
       category:
-        type: 'string'
+        type: string
       notes:
-        type: 'string'
-  TransactionUpdate:
-    type: 'object'
+        type: string
+  TransactionsUpdateCategory:
+    type: object
     properties:
       category:
-        type: 'string'
+        type: string
+  TransactionsUpdateNotes:
+    type: object
+    properties:
       notes:
-        type: 'string'
+        type: string
